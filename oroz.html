@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FOR MY RIKO LADDOO 🎀</title>
+    <style>
+        body {
+            margin: 0; padding: 0;
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; background-color: #ffdae9;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            overflow: hidden; transition: background 1s ease;
+        }
+
+        #main-card {
+            background: white; padding: 30px; border-radius: 50px;
+            box-shadow: 0 15px 0px #ffb3c1; text-align: center;
+            z-index: 10; border: 8px solid #ff4d6d;
+            width: 90%; max-width: 500px; position: relative;
+        }
+
+        .cat-photo {
+            width: 140px; height: 140px; border-radius: 50%;
+            border: 5px solid #ff4d6d; object-fit: cover;
+            margin-bottom: 10px; animation: pulse-heart 1.5s infinite;
+        }
+
+        @keyframes pulse-heart {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        h1 { color: #ff4d6d; font-size: 1.5rem; margin: 15px 0; }
+        
+        .btn-container {
+            display: flex; flex-direction: column; gap: 10px;
+            align-items: center; margin-top: 20px;
+        }
+
+        .row-btns { display: flex; gap: 15px; justify-content: center; width: 100%; position: relative; height: 80px; }
+
+        button {
+            padding: 12px 20px; font-size: 1rem; font-weight: bold;
+            border: none; border-radius: 50px; cursor: pointer;
+            background: #ff758f; color: white;
+            box-shadow: 0 4px 0px #c9184a; transition: 0.2s;
+        }
+
+        button:hover { transform: scale(1.05); background: #ff4d6d; }
+
+        #no-btn { background-color: #ced4da; box-shadow: 0 4px 0px #adb5bd; color: #495057; }
+
+        #success-screen { display: none; text-align: center; }
+        .pink-dashed-box {
+            background: white; padding: 40px; border-radius: 60px;
+            border: 6px dashed #ff4d6d;
+        }
+
+        .floaty { position: absolute; pointer-events: none; animation: fly 5s linear forwards; font-size: 40px; }
+        @keyframes fly { 0% { transform: translateY(110vh); opacity: 1; } 100% { transform: translateY(-10vh); opacity: 0; } }
+    </style>
+</head>
+<body>
+
+    <iframe id="music" width="1" height="1" src="" frameborder="0" allow="autoplay"></iframe>
+
+    <div id="main-card">
+        <img class="cat-photo" src="https://media.tenor.com/On7Vkv9Zkv8AAAAi/hello-kitty.gif">
+        <h1 id="question">Will you be my Valentine, Riko? 🎀</h1>
+        
+        <div id="options-area" class="btn-container">
+            <div class="row-btns" id="init-btns">
+                <button id="yes-btn" onclick="nextStep()">YES! 💖</button>
+                <button id="no-btn" onmouseover="moveNo()">No :(</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="success-screen">
+        <img src="https://media.tenor.com/XU9T_X992_EAAAAi/hello-kitty-sanrio.gif" width="200">
+        <div class="pink-dashed-box">
+            <h1 style="color: #ff4d6d;">SUMU LOVES RIKO!</h1>
+            <h2 style="color: #ff758f;">URRFF MY CUTUUUU BABYYYY</h2>
+            <h1 style="color: #ff4d6d;">URFF LADDOO FOREVER 🧸🍎🎀</h1>
+        </div>
+    </div>
+
+    <script>
+        let step = 0;
+        let yesScale = 1;
+
+        const content = {
+            1: {
+                q: "What do you fear the most? 😱",
+                btns: ["Cats", "Dogs", "Lizards", "Losing Me"],
+                type: "fear"
+            },
+            2: {
+                q: "What are you doing right now? 😏",
+                btns: ["Thinking about Sumu", "Thinking about Sumu (Freaky way)"],
+                type: "multi"
+            },
+            3: {
+                q: "Do you like...",
+                btns: ["Coke", "Pepsi", "Having Sumu beside you"],
+                type: "multi"
+            },
+            4: {
+                q: "Do you want me inside? (In your heart forever!) 😳",
+                btns: ["YES", "YES (but in Pink)"],
+                type: "multi"
+            }
+        };
+
+        function moveNo() {
+            const noBtn = document.getElementById('no-btn');
+            const yesBtn = document.getElementById('yes-btn');
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = Math.random() * 80 + 'vw';
+            noBtn.style.top = Math.random() * 80 + 'vh';
+            yesScale += 0.3;
+            yesBtn.style.transform = `scale(${yesScale})`;
+        }
+
+        function nextStep() {
+            step++;
+            const area = document.getElementById('options-area');
+            const qText = document.getElementById('question');
+
+            if (step <= 4) {
+                const data = content[step];
+                qText.innerText = data.q;
+                area.innerHTML = ''; // Clear old buttons
+
+                data.btns.forEach(btnText => {
+                    const b = document.createElement('button');
+                    b.innerText = btnText;
+                    b.onclick = () => {
+                        if (btnText === "Losing Me") {
+                            qText.innerText = "Are you sure it's not lizards? 🦎";
+                            area.innerHTML = `
+                                <button onclick="nextStep()">Yes (I'm sure)</button>
+                                <button onclick="alert('Liar! Its lizards.'); nextStep();">No (It is lizards)</button>
+                            `;
+                        } else {
+                            nextStep();
+                        }
+                    };
+                    area.appendChild(b);
+                });
+            } else {
+                showFinal();
+            }
+        }
+
+        function showFinal() {
+            document.getElementById('main-card').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+            document.body.style.backgroundColor = '#ffc2d1';
+            document.getElementById('music').src = "https://www.youtube.com/embed/L7HlvVfJjA0?autoplay=1";
+            setInterval(() => {
+                const div = document.createElement('div');
+                div.className = 'floaty';
+                div.innerText = ['🎀','💖','🍎','🧸'][Math.floor(Math.random()*4)];
+                div.style.left = Math.random()*100+"vw";
+                document.body.appendChild(div);
+                setTimeout(()=>div.remove(), 5000);
+            }, 150);
+        }
+    </script>
+</body>
+</html>
